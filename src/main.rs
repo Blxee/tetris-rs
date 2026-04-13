@@ -1,25 +1,32 @@
+mod game;
+mod visual;
+
 use std::{
-    io::{Result, Stdout, stdout},
+    io::{Result, Stdout, Write, stdout},
     thread::sleep,
     time::{Duration, Instant},
 };
 
 use crossterm::{
+    ExecutableCommand,
     cursor::{self, Hide, MoveTo, Show},
     event::{self, Event, KeyCode, KeyEvent, KeyEventKind, poll, read},
-    execute,
+    execute, queue,
     style::Print,
-    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen, size},
+    terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, size},
 };
+
+use crate::game::TetrisGame;
 
 fn main() -> Result<()> {
     let mut stdout = stdout();
-    terminal::enable_raw_mode()?;
-    execute!(stdout, EnterAlternateScreen)?;
-    execute!(stdout, Hide)?;
+    prepare_terminal(&mut stdout)?;
+
     let (cols, rows) = size()?;
     let program_start = Instant::now();
     let mut last_frame_time = program_start;
+
+    let tetris_game = TetrisGame();
 
     loop {
         let delta = last_frame_time.elapsed();
@@ -34,16 +41,25 @@ fn main() -> Result<()> {
             }
         }
         // do whatevee the hell you want here ;b
-        execute!(
-            stdout,
-            MoveTo(cols / 3, rows / 2),
-            Print(format!("delta: {}", delta.as_secs_f32()))
-        )?;
+        tetris_game.draw(&mut stdout);
 
+        stdout.flush()?;
         sleep(Duration::from_secs_f32(1. / 60.));
         last_frame_time = Instant::now();
     }
 
+    cleanup_terminal(&mut stdout)?;
+    Ok(())
+}
+
+fn prepare_terminal(stdout: &mut Stdout) -> Result<()> {
+    terminal::enable_raw_mode()?;
+    execute!(stdout, EnterAlternateScreen)?;
+    execute!(stdout, Hide)?;
+    Ok(())
+}
+
+fn cleanup_terminal(stdout: &mut Stdout) -> Result<()> {
     execute!(stdout, Show)?;
     execute!(stdout, LeaveAlternateScreen)?;
     terminal::disable_raw_mode()?;
