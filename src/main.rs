@@ -26,7 +26,7 @@ fn main() -> Result<()> {
     let program_start = Instant::now();
     let mut last_frame_time = program_start;
 
-    let tetris_game = TetrisGame();
+    let tetris_game = TetrisGame::new();
 
     loop {
         let delta = last_frame_time.elapsed();
