@@ -1,5 +1,5 @@
-pub struct TetrisGame {
-    tetrominos: Vec<Tetromino>,
+pub struct TetrisGame<const W: usize = 10, const H: usize = 16> {
+    tetrominos: [[Tetromino; W]; H],
     current: Tetromino,
 }
 

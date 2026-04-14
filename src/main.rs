@@ -8,12 +8,10 @@ use std::{
 };
 
 use crossterm::{
-    ExecutableCommand,
-    cursor::{self, Hide, MoveTo, Show},
-    event::{self, Event, KeyCode, KeyEvent, KeyEventKind, poll, read},
-    execute, queue,
-    style::Print,
-    terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, size},
+    cursor::{Hide, Show},
+    event::{Event, KeyCode, KeyEventKind, poll, read},
+    execute,
+    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen, size},
 };
 
 use crate::game::TetrisGame;
@@ -40,8 +38,8 @@ fn main() -> Result<()> {
                 }
             }
         }
-        // do whatevee the hell you want here ;b
-        tetris_game.draw(&mut stdout);
+
+        tetris_game.draw(&mut stdout)?;
 
         stdout.flush()?;
         sleep(Duration::from_secs_f32(1. / 60.));
