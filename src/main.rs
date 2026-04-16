@@ -39,6 +39,7 @@ fn main() -> Result<()> {
             }
         }
 
+        tetris_game.update(delta);
         tetris_game.draw(&mut stdout)?;
 
         stdout.flush()?;
