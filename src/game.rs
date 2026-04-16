@@ -17,16 +17,16 @@ pub struct TetrisGame<const W: usize = COLS, const H: usize = ROWS> {
 }
 
 type BrickColor = (u8, u8, u8);
-struct Position {
+pub struct Position {
     pub x: i32,
     pub y: i32,
 }
 
 // #[derive(Clone, Copy)]
-struct Tetromino {
+pub struct Tetromino {
     position: Position,
     kind: TetrominoKind,
-    color: BrickColor,
+    pub color: BrickColor,
 }
 
 #[derive(Clone, Copy)]
@@ -65,7 +65,7 @@ impl Tetromino {
         Self::new(kind, (0, 0, 0))
     }
 
-    fn get_bricks(&self) -> [Position; 4] {
+    pub fn get_bricks(&self) -> [Position; 4] {
         let bricks = match self.kind {
             TetrominoKind::I => I_SHAPE,
             TetrominoKind::J => J_SHAPE,

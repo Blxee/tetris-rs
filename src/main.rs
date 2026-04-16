@@ -33,6 +33,7 @@ fn main() -> Result<()> {
                 if key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') => break,
+                        KeyCode::Down => tetris_game.step(),
                         _ => (),
                     }
                 }
