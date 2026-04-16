@@ -10,8 +10,8 @@ use std::{
 use crossterm::{
     cursor::{Hide, Show},
     event::{Event, KeyCode, KeyEventKind, poll, read},
-    execute,
-    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen, size},
+    execute, queue,
+    terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, size},
 };
 
 use crate::game::TetrisGame;
@@ -24,7 +24,7 @@ fn main() -> Result<()> {
     let program_start = Instant::now();
     let mut last_frame_time = program_start;
 
-    let tetris_game = TetrisGame::new();
+    let mut tetris_game = TetrisGame::new();
 
     loop {
         let delta = last_frame_time.elapsed();
@@ -39,6 +39,7 @@ fn main() -> Result<()> {
             }
         }
 
+        queue!(stdout, Clear(ClearType::All))?;
         tetris_game.update(delta);
         tetris_game.draw(&mut stdout)?;
 

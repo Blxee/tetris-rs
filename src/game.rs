@@ -1,12 +1,11 @@
-use std::time::Duration;
+use std::{
+    ops::{Add, Index, IndexMut},
+    time::Duration,
+};
 
 use rand::{rng, seq::IndexedRandom};
 
-macro_rules! pos {
-    ($x: expr, $y: expr) => {
-        Position { x: $x, y: $y }
-    };
-}
+use crate::pos;
 
 const COLS: usize = 10;
 const ROWS: usize = 16;
@@ -66,8 +65,17 @@ impl Tetromino {
         Self::new(kind, (0, 0, 0))
     }
 
-    pub fn step(&mut self) {
-        todo!()
+    fn get_bricks(&self) -> [Position; 4] {
+        let bricks = match self.kind {
+            TetrominoKind::I => I_SHAPE,
+            TetrominoKind::J => J_SHAPE,
+            TetrominoKind::L => L_SHAPE,
+            TetrominoKind::N => N_SHAPE,
+            TetrominoKind::O => O_SHAPE,
+            TetrominoKind::T => T_SHAPE,
+            TetrominoKind::S => S_SHAPE,
+        };
+        bricks.map(|pos| pos + pos!(0, 1))
     }
 }
 impl TetrisGame {
@@ -78,4 +86,54 @@ impl TetrisGame {
             time: Duration::ZERO,
         }
     }
+
+    pub fn get_size(&self) -> (usize, usize) {
+        (self.bricks.len(), self.bricks[0].len())
+    }
+
+    pub fn step(&mut self) {
+        self.current.position.x += 1;
+        for brick in self.current.get_bricks() {
+            let lower_brick = self[brick + pos!(0, 1)];
+            if lower_brick.is_none() {
+                self.fix_current_bricks();
+                self.current = Tetromino::random();
+            }
+        }
+    }
+
+    fn fix_current_bricks(&mut self) {
+        for brick in self.current.get_bricks() {
+            self[brick] = Some(self.current.color);
+        }
+    }
+}
+
+impl Index<Position> for TetrisGame {
+    type Output = Option<BrickColor>;
+
+    fn index(&self, index: Position) -> &Self::Output {
+        &self.bricks[index.x as usize][index.y as usize]
+    }
+}
+
+impl IndexMut<Position> for TetrisGame {
+    fn index_mut(&mut self, index: Position) -> &mut Self::Output {
+        &mut self.bricks[index.x as usize][index.y as usize]
+    }
+}
+
+impl Add for Position {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        pos!(self.x + rhs.x, self.y + self.y)
+    }
+}
+
+#[macro_export]
+macro_rules! pos {
+    ($x: expr, $y: expr) => {
+        Position { x: $x, y: $y }
+    };
 }
