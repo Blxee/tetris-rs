@@ -17,12 +17,13 @@ pub struct TetrisGame<const W: usize = COLS, const H: usize = ROWS> {
 }
 
 type BrickColor = (u8, u8, u8);
+
+#[derive(Clone, Copy, Debug)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
 }
 
-// #[derive(Clone, Copy)]
 pub struct Tetromino {
     position: Position,
     kind: TetrominoKind,
@@ -62,7 +63,7 @@ impl Tetromino {
         const KINDS: [TetrominoKind; 7] = [I, J, L, N, O, T, S];
         let mut rng = rng();
         let kind = *KINDS.choose(&mut rng).unwrap();
-        Self::new(kind, (0, 0, 0))
+        Self::new(kind, (255, 0, 0))
     }
 
     pub fn get_bricks(&self) -> [Position; 4] {
@@ -75,7 +76,7 @@ impl Tetromino {
             TetrominoKind::T => T_SHAPE,
             TetrominoKind::S => S_SHAPE,
         };
-        bricks.map(|pos| pos + pos!(0, 1))
+        bricks.map(|pos| pos + self.position)
     }
 }
 impl TetrisGame {
@@ -87,15 +88,15 @@ impl TetrisGame {
         }
     }
 
-    pub fn get_size(&self) -> (usize, usize) {
-        (self.bricks.len(), self.bricks[0].len())
+    pub fn get_size(&self) -> (i32, i32) {
+        (self.bricks.len() as i32, self.bricks[0].len() as i32)
     }
 
     pub fn step(&mut self) {
-        self.current.position.x += 1;
+        self.current.position.y += 1;
         for brick in self.current.get_bricks() {
-            let lower_brick = self[brick + pos!(0, 1)];
-            if lower_brick.is_none() {
+            let lower_brick = self[brick];
+            if lower_brick.is_some() {
                 self.fix_current_bricks();
                 self.current = Tetromino::random();
             }

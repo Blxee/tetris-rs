@@ -39,13 +39,17 @@ impl TetrisGame {
                 }
             }
         }
+
+        let (max_y, max_x) = self.get_size();
         let (r, g, b) = self.current.color;
         for Position { x, y } in self.current.get_bricks() {
-            queue!(
-                stdout,
-                MoveTo(y as u16, x as u16),
-                Print("#".with(Color::Rgb { r, g, b }))
-            )?;
+            if x >= 0 && x < max_x && y >= 0 && y < max_y {
+                queue!(
+                    stdout,
+                    MoveTo(y as u16, x as u16),
+                    Print("#".with(Color::Rgb { r, g, b }))
+                )?;
+            }
         }
         Ok(())
     }
