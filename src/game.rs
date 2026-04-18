@@ -41,15 +41,15 @@ enum TetrominoKind {
     S,
 }
 
-const I_SHAPE: [Position; 4] = [pos!(1, 0), pos!(1, 1), pos!(1, 2), pos!(1, 3)];
-const J_SHAPE: [Position; 4] = [pos!(1, 2), pos!(2, 0), pos!(2, 1), pos!(2, 2)];
-const L_SHAPE: [Position; 4] = [pos!(1, 0), pos!(1, 1), pos!(1, 2), pos!(2, 2)];
-const N_SHAPE: [Position; 4] = [pos!(1, 1), pos!(2, 1), pos!(2, 2), pos!(3, 2)];
-const O_SHAPE: [Position; 4] = [pos!(1, 1), pos!(2, 1), pos!(1, 2), pos!(2, 2)];
-const T_SHAPE: [Position; 4] = [pos!(1, 1), pos!(2, 1), pos!(3, 1), pos!(2, 2)];
-const S_SHAPE: [Position; 4] = [pos!(1, 2), pos!(2, 2), pos!(2, 1), pos!(3, 1)];
-
 impl Tetromino {
+    const I_SHAPE: [Position; 4] = [pos!(1, 0), pos!(1, 1), pos!(1, 2), pos!(1, 3)];
+    const J_SHAPE: [Position; 4] = [pos!(1, 2), pos!(2, 0), pos!(2, 1), pos!(2, 2)];
+    const L_SHAPE: [Position; 4] = [pos!(1, 0), pos!(1, 1), pos!(1, 2), pos!(2, 2)];
+    const N_SHAPE: [Position; 4] = [pos!(1, 1), pos!(2, 1), pos!(2, 2), pos!(3, 2)];
+    const O_SHAPE: [Position; 4] = [pos!(1, 1), pos!(2, 1), pos!(1, 2), pos!(2, 2)];
+    const T_SHAPE: [Position; 4] = [pos!(1, 1), pos!(2, 1), pos!(3, 1), pos!(2, 2)];
+    const S_SHAPE: [Position; 4] = [pos!(1, 2), pos!(2, 2), pos!(2, 1), pos!(3, 1)];
+
     fn new(kind: TetrominoKind, color: BrickColor) -> Self {
         Self {
             position: pos!(3, -4),
@@ -67,14 +67,15 @@ impl Tetromino {
     }
 
     pub fn get_bricks(&self) -> [Position; 4] {
+        use TetrominoKind::*;
         let bricks = match self.kind {
-            TetrominoKind::I => I_SHAPE,
-            TetrominoKind::J => J_SHAPE,
-            TetrominoKind::L => L_SHAPE,
-            TetrominoKind::N => N_SHAPE,
-            TetrominoKind::O => O_SHAPE,
-            TetrominoKind::T => T_SHAPE,
-            TetrominoKind::S => S_SHAPE,
+            I => Self::I_SHAPE,
+            J => Self::J_SHAPE,
+            L => Self::L_SHAPE,
+            N => Self::N_SHAPE,
+            O => Self::O_SHAPE,
+            T => Self::T_SHAPE,
+            S => Self::S_SHAPE,
         };
         bricks.map(|pos| pos + self.position)
     }

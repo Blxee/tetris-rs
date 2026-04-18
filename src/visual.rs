@@ -27,13 +27,13 @@ impl TetrisGame {
                 if let &Some((r, g, b)) = brick {
                     queue!(
                         stdout,
-                        MoveTo(y as u16, x as u16),
+                        MoveTo(x as u16, y as u16),
                         Print("#".with(Color::Rgb { r, g, b }))
                     )?;
                 } else {
                     queue!(
                         stdout,
-                        MoveTo(y as u16, x as u16),
+                        MoveTo(x as u16, y as u16),
                         Print(".".with(Color::White))
                     )?;
                 }
@@ -46,7 +46,7 @@ impl TetrisGame {
             if x >= 0 && x < max_x && y >= 0 && y < max_y {
                 queue!(
                     stdout,
-                    MoveTo(y as u16, x as u16),
+                    MoveTo(x as u16, y as u16),
                     Print("#".with(Color::Rgb { r, g, b }))
                 )?;
             }
