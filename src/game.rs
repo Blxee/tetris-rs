@@ -18,7 +18,7 @@ pub struct TetrisGame<const W: usize = COLS, const H: usize = ROWS> {
 
 type BrickColor = (u8, u8, u8);
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -80,6 +80,7 @@ impl Tetromino {
         bricks.map(|pos| pos + self.position)
     }
 }
+
 impl TetrisGame {
     pub fn new() -> Self {
         Self {
@@ -136,6 +137,9 @@ impl Add for Position {
 #[macro_export]
 macro_rules! pos {
     ($x: expr, $y: expr) => {
-        Position { x: $x, y: $y }
+        Position {
+            x: $x as i32,
+            y: $y as i32,
+        }
     };
 }

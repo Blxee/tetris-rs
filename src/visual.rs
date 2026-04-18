@@ -1,4 +1,5 @@
 use std::{
+    collections::HashSet,
     io::{self, Stdout},
     process::exit,
     time::Duration,
@@ -10,7 +11,10 @@ use crossterm::{
     style::{Color, Print, ResetColor, StyledContent, Stylize},
 };
 
-use crate::game::{Position, TetrisGame};
+use crate::{
+    game::{Position, TetrisGame},
+    pos,
+};
 
 impl TetrisGame {
     pub fn update(&mut self, delta: Duration) {
@@ -22,9 +26,17 @@ impl TetrisGame {
     }
 
     pub fn draw(&self, stdout: &mut Stdout) -> io::Result<()> {
+        let current = HashSet::from(self.current.get_bricks());
         for (y, row) in self.bricks.iter().enumerate() {
             for (x, brick) in row.iter().enumerate() {
-                if let &Some((r, g, b)) = brick {
+                if current.contains(&pos!(x, y)) {
+                    let (r, g, b) = self.current.color;
+                    queue!(
+                        stdout,
+                        MoveTo(x as u16, y as u16),
+                        Print("#".with(Color::Rgb { r, g, b }))
+                    )?;
+                } else if let &Some((r, g, b)) = brick {
                     queue!(
                         stdout,
                         MoveTo(x as u16, y as u16),
@@ -37,18 +49,6 @@ impl TetrisGame {
                         Print(".".with(Color::White))
                     )?;
                 }
-            }
-        }
-
-        let (max_y, max_x) = self.get_size();
-        let (r, g, b) = self.current.color;
-        for Position { x, y } in self.current.get_bricks() {
-            if x >= 0 && x < max_x && y >= 0 && y < max_y {
-                queue!(
-                    stdout,
-                    MoveTo(x as u16, y as u16),
-                    Print("#".with(Color::Rgb { r, g, b }))
-                )?;
             }
         }
         Ok(())
